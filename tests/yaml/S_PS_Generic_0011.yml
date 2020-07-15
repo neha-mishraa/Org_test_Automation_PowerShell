@@ -1,0 +1,10 @@
+pipelines:
+  - name: S_PS_Generic_0011
+    steps:
+      - name: S_PS_Generic_0011
+        type: PowerShell
+        configuration:
+          nodePool: automation_node_invalid
+        execution:
+          onExecute:
+            - write-output "executing step..."
