@@ -7,17 +7,17 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_airBrake
+            - name: PSSI_AirBrake
         execution:
           onExecute:
             - write-output "executing step..."
             - |
-              [ ! -z "$int_i_airBrake_url" ]
+              [ ! -z "$int_PSSI_AirBrake_url" ]
             - |
-              [ ! -z "$int_i_airBrake_masterName" ]
+              [ ! -z "$int_PSSI_AirBrake_masterName" ]
             - |
-              [ ! -z "$int_i_airBrake_id" ]
+              [ ! -z "$int_PSSI_AirBrake_id" ]
             - |
-              [ ! -z "$int_i_airBrake_name" ]
+              [ ! -z "$int_PSSI_AirBrake_name" ]
             - |
-              [ ! -z "$int_i_airBrake_token" ]
+              [ ! -z "$int_PSSI_AirBrake_token" ]

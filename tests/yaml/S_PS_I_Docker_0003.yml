@@ -6,25 +6,25 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_dockerRegistry
+            - name: PSSI_DockerRegistry
         execution:
           onExecute:
             - echo "executing step..."
-            - if($int_i_dockerRegistry_masterName -eq $null){
+            - if($int_PSSI_DockerRegistry_masterName -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_dockerRegistry_username -eq $null){
+            - if($int_PSSI_DockerRegistry_username -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_dockerRegistry_name -eq $null){
+            - if($int_PSSI_DockerRegistry_name -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_dockerRegistry_password -eq $null){
+            - if($int_PSSI_DockerRegistry_password -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_dockerRegistry_id -eq $null){
+            - if($int_PSSI_DockerRegistry_id -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_dockerRegistry_url -eq $null){
+            - if($int_PSSI_DockerRegistry_url -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }  

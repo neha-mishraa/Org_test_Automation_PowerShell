@@ -3,7 +3,7 @@ resources:
   - name: S_PS_R_IMAGE_0027_Image
     type: Image
     configuration:
-      registry: i_dockerRegistry
+      registry: PSSR_DockerRegistry
       imageName: shipbeta00/jreq_win
       imageTag: latest
 

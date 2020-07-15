@@ -2,7 +2,7 @@ resources:
   - name: S_PS_Generic_0046_Image
     type: Image	
     configuration:	   
-      registry: i_dockerRegistry	      
+      registry: PSSG_DockerRegistry	      
       imageName: shippabledocker/jfreq_win	      
       imageTag: latest	
       autoPull: true

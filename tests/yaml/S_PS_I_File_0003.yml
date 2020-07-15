@@ -6,7 +6,7 @@ pipelines:
         type: PowerShell
         configuration:
           integrations:
-            - name: i_fileServer
+            - name: PSSI_FileServer
         execution:
           onExecute:
             - echo "executing step..."

@@ -6,16 +6,16 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_generic
+            - name: PSSI_Generic
         execution:
           onExecute:
             - write-output "executing step..."
-            - if($int_i_generic_name -eq $null){
+            - if($int_PSSI_Generic_name -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_generic_id -eq $null){
+            - if($int_PSSI_Generic_id -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_generic_masterName -eq $null){
+            - if($int_PSSI_Generic_masterName -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }

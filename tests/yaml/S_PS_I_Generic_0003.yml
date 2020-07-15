@@ -6,7 +6,7 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_generic
+            - name: PSSI_Generic
         execution:
           onExecute:
             - write-output "executing step..."

@@ -5,7 +5,7 @@ pipelines:
         type: PowerShell
         configuration:
           integrations:
-            - name: i_jenkins
+            - name: PSSI_Jenkins
         execution:
           onExecute:
             - echo "executing step..."

@@ -6,19 +6,19 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_slack
+            - name: PSSI_Slack
         execution:
           onExecute:
             - write-output "executing step..."
-            - if($int_i_slack_masterName -eq $null){
+            - if($int_PSSI_Slack_masterName -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_slack_url -eq $null){
+            - if($int_PSSI_Slack_url -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_slack_id-eq $null){
+            - if($int_PSSI_Slack_id-eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_slack_name -eq $null){
+            - if($int_PSSI_Slack_name -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }

@@ -6,7 +6,7 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_dockerRegistry
+            - name: PSSI_DockerRegistry
         execution:
           onExecute:
             - echo "executing step..."

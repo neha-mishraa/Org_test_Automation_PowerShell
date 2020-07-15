@@ -7,7 +7,7 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_aws
+            - name: PSSI_AWS
         execution:
           onExecute:
             - write-output "executing step..."

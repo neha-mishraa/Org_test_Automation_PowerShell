@@ -6,19 +6,19 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_distribution
+            - name: PSSI_Distribution
         execution:
           onExecute:
             - write-output "executing step..."
             - |
-              [ ! -z "$int_i_distribution_url" ]
+              [ ! -z "$int_PSSI_Distribution_url" ]
             - |
-              [ ! -z "$int_i_distribution_masterName" ]
+              [ ! -z "$int_PSSI_Distribution_masterName" ]
             - |
-              [ ! -z "$int_i_distribution_apikey" ]
+              [ ! -z "$int_PSSI_Distribution_apikey" ]
             - |
-              [ ! -z "$int_i_distribution_id" ]
+              [ ! -z "$int_PSSI_Distribution_id" ]
             - |
-              [ ! -z "$int_i_distribution_name" ]
+              [ ! -z "$int_PSSI_Distribution_name" ]
             - |
-              [ ! -z "$int_i_distribution_user" ]
+              [ ! -z "$int_PSSI_Distribution_user" ]

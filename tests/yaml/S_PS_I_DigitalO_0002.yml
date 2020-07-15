@@ -7,15 +7,15 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_digitalocean
+            - name: PSSI_DigitalOcean
         execution:
           onExecute:
             - write-output "executing step..."
             - |
-              [ ! -z "$int_i_digitalocean_id"  ]
+              [ ! -z "$int_PSSI_DigitalOcean_id"  ]
             - |
-              [ ! -z "$int_i_digitalocean_token"  ]
+              [ ! -z "$int_PSSI_DigitalOcean_token"  ]
             - |
-              [ ! -z "$int_i_digitalocean_masterName"  ]
+              [ ! -z "$int_PSSI_DigitalOcean_masterName"  ]
             - |
-              [ ! -z "$int_i_digitalocean_name"  ]
+              [ ! -z "$int_PSSI_DigitalOcean_name"  ]

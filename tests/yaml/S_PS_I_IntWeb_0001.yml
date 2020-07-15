@@ -5,8 +5,8 @@ pipelines:
         type: PowerShell
         configuration:
           integrations:
-            - name: i_incomingWebhookBasicAuth
-            - name: i_incomingWebhookTokenAuth
+            - name: PSSI_IW_BasicAuth
+            - name: PSSI_IW_TokenAuth
         execution:
           onExecute:
             - echo "executing step..."

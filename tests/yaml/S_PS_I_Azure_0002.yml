@@ -7,7 +7,7 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_azureKey
+            - name: PSSI_AzureKeys
         execution:
           onExecute:
             - write-output "executing step..."

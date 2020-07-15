@@ -5,7 +5,7 @@ pipelines:
         type: PowerShell
         configuration:
           integrations:
-            - name: i_sshKey
+            - name: PSSI_SSHKEY
         execution:
           onExecute:
             - echo "executing step..."

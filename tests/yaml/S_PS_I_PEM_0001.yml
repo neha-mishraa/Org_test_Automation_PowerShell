@@ -5,7 +5,7 @@
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_pemKey
+            - name: PSSI_PemKey
         execution:
           onExecute:
             - write-output "executing step..."

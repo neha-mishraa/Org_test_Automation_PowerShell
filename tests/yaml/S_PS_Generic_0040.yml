@@ -11,7 +11,7 @@ pipelines:
               custom:
                 name: shippabledocker/jfreq_win
                 tag: latest
-                registry: i_dockerRegistry
+                registry: PSSG_DockerRegistry
         execution:
           onExecute:
             - write-output "executing step..."

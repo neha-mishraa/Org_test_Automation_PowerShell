@@ -7,19 +7,19 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_azureKey
+            - name: PSSI_AzureKeys
         execution:
           onExecute:
             - write-output "executing step..."
             - |
-              [ ! -z "$int_i_azureKey_name" ]
+              [ ! -z "$int_PSSI_AzureKeys_name" ]
             - |
-              [ ! -z "$int_i_azureKey_password" ]
+              [ ! -z "$int_PSSI_AzureKeys_password" ]
             - |
-              [ ! -z "$int_i_azureKey_appId" ]
+              [ ! -z "$int_PSSI_AzureKeys_appId" ]
             - |
-              [ ! -z "$int_i_azureKey_masterName" ]
+              [ ! -z "$int_PSSI_AzureKeys_masterName" ]
             - |
-              [ ! -z "$int_i_azureKey_id" ]
+              [ ! -z "$int_PSSI_AzureKeys_id" ]
             - |
-              [ ! -z "$int_i_azureKey_tenant" ]
+              [ ! -z "$int_PSSI_AzureKeys_tenant" ]

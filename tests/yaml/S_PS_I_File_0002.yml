@@ -6,21 +6,21 @@ pipelines:
         type: PowerShell
         configuration:
           integrations:
-            - name: i_fileServer
+            - name: PSSI_FileServer
         execution:
           onExecute:
             - echo "executing step..."
             - |
-              [ ! -z "$int_i_fileServer_name"  ]
+              [ ! -z "$int_PSSI_FileServer_name"  ]
             - |
-              [ ! -z "$int_i_fileServer_masterName"  ]
+              [ ! -z "$int_PSSI_FileServer_masterName"  ]
             - |
-              [ ! -z "$int_i_fileServer_username"  ]
+              [ ! -z "$int_PSSI_FileServer_username"  ]
             - |
-              [ ! -z "$int_i_fileServer_protocol"  ]
+              [ ! -z "$int_PSSI_FileServer_protocol"  ]
             - |
-              [ ! -z "$int_i_fileServer_id"  ]
+              [ ! -z "$int_PSSI_FileServer_id"  ]
             - |
-              [ ! -z "$int_i_fileServer_password"  ]
+              [ ! -z "$int_PSSI_FileServer_password"  ]
             - |
-              [ ! -z "$int_i_fileServer_url"  ]
+              [ ! -z "$int_PSSI_FileServer_url"  ]

@@ -5,7 +5,7 @@ pipelines:
         type: PowerShell
         configuration:
           integrations:
-            - name: i_smtp
+            - name: PSSI_SMTP
         execution:
           onExecute:
             - echo "executing step..."

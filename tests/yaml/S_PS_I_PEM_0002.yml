@@ -6,15 +6,15 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_pemKey
+            - name: PSSI_PemKey
         execution:
           onExecute:
             - write-output "executing step..."
             - |
-              [ ! -z "$int_i_pemKey_masterName" ]
+              [ ! -z "$int_PSSI_PemKey_masterName" ]
             - |
-              [ ! -z "$int_i_pemKey_key" ]
+              [ ! -z "$int_PSSI_PemKey_key" ]
             - |
-              [ ! -z "$int_i_pemKey_id" ]
+              [ ! -z "$int_PSSI_PemKey_id" ]
             - |
-              [ ! -z "$int_i_pemKey_name" ]
+              [ ! -z "$int_PSSI_PemKey_name" ]

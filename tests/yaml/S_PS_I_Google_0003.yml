@@ -6,19 +6,19 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_googleCloud
+            - name: PSSI_GoogleCloud
         execution:
           onExecute:
             - write-output "executing step..."
-            - if($int_i_googleCloud_masterName -eq $null){
+            - if($int_PSSI_GoogleCloud_masterName -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_googleCloud_id -eq $null){
+            - if($int_PSSI_GoogleCloud_id -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_googleCloud_name -eq $null){
+            - if($int_PSSI_GoogleCloud_name -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_googleCloud_jsonKey -eq $null){
+            - if($int_PSSI_GoogleCloud_jsonKey -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }

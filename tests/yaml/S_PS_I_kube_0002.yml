@@ -6,17 +6,17 @@ pipelines:
         configuration:
           nodePool: win_2019
           integrations:
-            - name: i_kubernetes
+            - name: PSSI_Kubernetes
         execution:
           onExecute:
             - write-output "executing step..."
             - |
-              [ ! -z "$int_i_kubernetes_masterName"  ]
+              [ ! -z "$int_PSSI_Kubernetes_masterName"  ]
             - |
-              [ ! -z "$int_i_kubernetes_id"  ]
+              [ ! -z "$int_PSSI_Kubernetes_id"  ]
             - |
               [ ! -z "$KUBECONFIG"  ]
             - |
-              [ ! -z "$int_i_kubernetes_kubeconfig"  ]
+              [ ! -z "$int_PSSI_Kubernetes_kubeconfig"  ]
             - |
-              [ ! -z "$int_i_kubernetes_name"  ]
+              [ ! -z "$int_PSSI_Kubernetes_name"  ]

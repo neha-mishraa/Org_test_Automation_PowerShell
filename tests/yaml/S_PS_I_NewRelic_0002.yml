@@ -5,17 +5,17 @@ pipelines:
         type: PowerShell
         configuration:
           integrations:
-            - name: i_newRelic
+            - name: PSSI_NewRelic
         execution:
           onExecute:
             - echo "executing step..."
             - |
-              [ ! -z "$int_i_newRelic_masterName"  ]
+              [ ! -z "$int_PSSI_NewRelic_masterName"  ]
             - |
-              [ ! -z "$int_i_newRelic_url"  ]
+              [ ! -z "$int_PSSI_NewRelic_url"  ]
             - |
-              [ ! -z "$int_i_newRelic_name"  ]
+              [ ! -z "$int_PSSI_NewRelic_name"  ]
             - |
-              [ ! -z "$int_i_newRelic_token"  ]
+              [ ! -z "$int_PSSI_NewRelic_token"  ]
             - |
-              [ ! -z "$int_i_newRelic_id"  ]
+              [ ! -z "$int_PSSI_NewRelic_id"  ]
