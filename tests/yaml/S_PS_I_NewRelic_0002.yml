@@ -1,0 +1,21 @@
+pipelines:
+  - name: pipelines_S_PS_I_NewRelic_0002
+    steps:
+      - name: S_PS_I_NewRelic_0002
+        type: PowerShell
+        configuration:
+          integrations:
+            - name: PSSI_NewRelic
+        execution:
+          onExecute:
+            - echo "executing step..."
+            - |
+              [ ! -z "$int_PSSI_NewRelic_masterName"  ]
+            - |
+              [ ! -z "$int_PSSI_NewRelic_url"  ]
+            - |
+              [ ! -z "$int_PSSI_NewRelic_name"  ]
+            - |
+              [ ! -z "$int_PSSI_NewRelic_token"  ]
+            - |
+              [ ! -z "$int_PSSI_NewRelic_id"  ]

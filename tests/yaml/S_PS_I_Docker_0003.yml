@@ -1,0 +1,30 @@
+pipelines:
+  - name: pipelines_S_PS_I_Docker_0003
+    steps:
+      - name: S_PS_I_Docker_0003
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+          integrations:
+            - name: PSSI_DockerRegistry
+        execution:
+          onExecute:
+            - echo "executing step..."
+            - if($int_PSSI_DockerRegistry_masterName -eq $null){
+              Write-Error "Stop" -ErrorAction Stop
+              }
+            - if($int_PSSI_DockerRegistry_username -eq $null){
+              Write-Error "Stop" -ErrorAction Stop
+              }
+            - if($int_PSSI_DockerRegistry_name -eq $null){
+              Write-Error "Stop" -ErrorAction Stop
+              }
+            - if($int_PSSI_DockerRegistry_password -eq $null){
+              Write-Error "Stop" -ErrorAction Stop
+              }
+            - if($int_PSSI_DockerRegistry_id -eq $null){
+              Write-Error "Stop" -ErrorAction Stop
+              }
+            - if($int_PSSI_DockerRegistry_url -eq $null){
+              Write-Error "Stop" -ErrorAction Stop
+              }  

@@ -1,0 +1,26 @@
+pipelines:
+
+  - name: pipelines_S_PS_I_File_0002
+    steps:
+      - name: S_PS_I_File_0002
+        type: PowerShell
+        configuration:
+          integrations:
+            - name: PSSI_FileServer
+        execution:
+          onExecute:
+            - echo "executing step..."
+            - |
+              [ ! -z "$int_PSSI_FileServer_name"  ]
+            - |
+              [ ! -z "$int_PSSI_FileServer_masterName"  ]
+            - |
+              [ ! -z "$int_PSSI_FileServer_username"  ]
+            - |
+              [ ! -z "$int_PSSI_FileServer_protocol"  ]
+            - |
+              [ ! -z "$int_PSSI_FileServer_id"  ]
+            - |
+              [ ! -z "$int_PSSI_FileServer_password"  ]
+            - |
+              [ ! -z "$int_PSSI_FileServer_url"  ]

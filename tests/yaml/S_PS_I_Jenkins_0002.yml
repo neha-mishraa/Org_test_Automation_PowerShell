@@ -1,0 +1,27 @@
+pipelines:
+  - name: pipelines_S_PS_I_Jenkins_0002
+    steps:
+      - name: S_PS_I_Jenkins_0002
+        type: PowerShell
+        configuration:
+          integrations:
+            - name: PSSI_Jenkins
+        execution:
+          onExecute:
+            - echo "executing step..."
+            - |
+              [ ! -z "$int_PSSI_Jenkins_url" ]
+            - |
+              [ ! -z "$int_PSSI_Jenkins_apiToken" ]
+            - |
+              [ ! -z "$int_PSSI_Jenkins_id" ]
+            - |
+              [ ! -z "$int_PSSI_Jenkins_name" ]
+            - |
+              [ ! -z "$int_PSSI_Jenkins_username" ]
+            - |
+              [ ! -z "$int_PSSI_Jenkins_hookPassword" ]
+            - |
+              [ ! -z "$int_PSSI_Jenkins_masterName" ]
+            - |
+              [ ! -z "$int_PSSI_Jenkins_hookUsername" ]

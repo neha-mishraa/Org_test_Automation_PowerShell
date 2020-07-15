@@ -1,0 +1,22 @@
+pipelines:
+  - name: pipelines_S_PS_I_kube_0002
+    steps:
+      - name: S_PS_I_kube_0002
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+          integrations:
+            - name: PSSI_Kubernetes
+        execution:
+          onExecute:
+            - write-output "executing step..."
+            - |
+              [ ! -z "$int_PSSI_Kubernetes_masterName"  ]
+            - |
+              [ ! -z "$int_PSSI_Kubernetes_id"  ]
+            - |
+              [ ! -z "$KUBECONFIG"  ]
+            - |
+              [ ! -z "$int_PSSI_Kubernetes_kubeconfig"  ]
+            - |
+              [ ! -z "$int_PSSI_Kubernetes_name"  ]

@@ -1,0 +1,21 @@
+pipelines:
+  - name: pipelines_S_PS_I_SSH_0002
+    steps:
+      - name: S_PS_I_SSH_0002
+        type: PowerShell
+        configuration:
+          integrations:
+            - name: PSSI_SSHKEY
+        execution:
+          onExecute:
+            - echo "executing step..."
+            - |
+              [ ! -z "$int_PSSI_SSHKEY_masterName" ]
+            - |
+              [ ! -z "$int_PSSI_SSHKEY_privateKey" ]
+            - |
+              [ ! -z "$int_PSSI_SSHKEY_publicKey" ]
+            - |
+              [ ! -z "$int_PSSI_SSHKEY_id" ]
+            - |
+              [ ! -z "$int_PSSI_SSHKEY_name" ]

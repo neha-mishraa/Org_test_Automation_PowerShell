@@ -1,0 +1,23 @@
+pipelines:
+  - name: pipelines_S_PS_I_Jira_0002
+    steps:
+      - name: S_PS_I_Jira_0002
+        type: PowerShell
+        configuration:
+          integrations:
+            - name: PSSI_Jira
+        execution:
+          onExecute:
+            - echo "executing step..."
+            - |
+              [ ! -z "$int_PSSI_Jira_masterName" ]
+            - |
+              [ ! -z "$int_PSSI_Jira_username" ]
+            - |
+              [ ! -z "$int_PSSI_Jira_name" ]
+            - |
+              [ ! -z "$int_PSSI_Jira_url" ]
+            - |
+              [ ! -z "$int_PSSI_Jira_id" ]
+            - |
+              [ ! -z "$int_PSSI_Jira_token" ]

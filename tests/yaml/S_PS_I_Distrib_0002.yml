@@ -1,0 +1,24 @@
+pipelines:
+  - name: pipelines_S_PS_I_Distrib_0002
+    steps:
+      - name: S_PS_I_Distrib_0002
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+          integrations:
+            - name: PSSI_Distribution
+        execution:
+          onExecute:
+            - write-output "executing step..."
+            - |
+              [ ! -z "$int_PSSI_Distribution_url" ]
+            - |
+              [ ! -z "$int_PSSI_Distribution_masterName" ]
+            - |
+              [ ! -z "$int_PSSI_Distribution_apikey" ]
+            - |
+              [ ! -z "$int_PSSI_Distribution_id" ]
+            - |
+              [ ! -z "$int_PSSI_Distribution_name" ]
+            - |
+              [ ! -z "$int_PSSI_Distribution_user" ]

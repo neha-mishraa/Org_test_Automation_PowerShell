@@ -1,0 +1,38 @@
+pipelines:
+  - name: pipelines_S_PS_I_IntWeb_0002
+    steps:
+      - name: S_PS_I_IntWeb_0002
+        type: PowerShell
+        configuration:
+          integrations:
+            - name: PSSI_IW_BasicAuth
+            - name: PSSI_IW_TokenAuth
+        execution:
+          onExecute:
+            - echo "executing step..."
+            - |
+              [ ! -z "$int_PSSI_IW_TokenAuth_name"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_TokenAuth_id"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_TokenAuth_masterName"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_TokenAuth_authType"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_TokenAuth_authorization"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_BasicAuth_secret"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_BasicAuth_authType"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_BasicAuth_masterName"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_BasicAuth_username"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_BasicAuth_name"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_BasicAuth_password"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_BasicAuth_id"  ]
+            - |
+              [ ! -z "$int_PSSI_IW_BasicAuth_authorization"  ]
