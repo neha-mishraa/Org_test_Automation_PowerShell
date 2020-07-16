@@ -14,7 +14,7 @@ pipelines:
           nodePool: win_2019
           integrations:
             - name: s_gitHub
-            - name: slack
+            - name: PSSU_SLACK
           inputResources:
             - name: S_PS_UTIL
 
