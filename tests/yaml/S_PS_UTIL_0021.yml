@@ -20,5 +20,5 @@ pipelines:
 
         execution:
           onExecute:
-            - send_notification slack
+            - send_notification PSSU_SLACK
             - write-output "onExecute"
