@@ -8,5 +8,5 @@ pipelines:
         execution:
           onExecute:
             - write-output "testvariable1={{.test}}"
-            - write-output "variable123={{ .something }"
+            - write-output "variable123={{ .something }}"
             - write-output "testvariable2={{gitBranch}}"
