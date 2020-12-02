@@ -6,7 +6,8 @@ resources:
       sourceArtifactory: s_artifactory
       pattern: "test-local/setup/"
       recursive: false
-      sortBy: invalid
+      sortBy: 
+        - invalid
 
 pipelines:
 
