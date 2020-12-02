@@ -6,7 +6,8 @@ resources:
       sourceArtifactory: s_artifactory
       pattern: "test-local/setup/"
       recursive: false
-      excludePatterns: "#arti*"
+      excludePatterns: 
+        - "#arti*"
 
 pipelines:
 
