@@ -6,7 +6,7 @@ resources:
       pattern: "*/s_foo*"
       limit: 1
       sortBy:
-        - "*/pip\"eIn\"fo.json"
+        - invaild
       target: 'C:\Users\pipelines\Desktop\'
 pipelines:
   - name: pipelines_S_PS_R_FLSPEC_0022
