@@ -3,11 +3,10 @@ resources:
     type: FileSpec
     configuration:
       sourceArtifactory: s_artifactory
-      pattern: "*/s_foo*"
-      limit: 1
+      pattern: example-repo-local/setup/
+      recursive: false
       sortBy:
-        - invaild
-      target: 'C:\Users\pipelines\Desktop\'
+        - invalid
 pipelines:
   - name: pipelines_S_PS_R_FLSPEC_0022
     steps:
