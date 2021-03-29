@@ -1,0 +1,20 @@
+pipelines:
+  - name: pipeline_S_PS_Generic_0068
+    steps:
+      - name: S_PS_Generic_0068
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+          runtime:
+            type: image
+            image:
+              custom:
+                name: releases-docker.jfrog.io/jfrog/pipelines-w19dotnetcore
+                tag: "3.1"
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - jfrog --version
+            - if ((jfrog --version) -eq "jfrog version 1.38.0") { throw "Wrong version" }
+            - jfrog config show s_artifactory
