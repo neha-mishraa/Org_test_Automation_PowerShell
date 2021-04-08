@@ -1,0 +1,27 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_R_GIT_0033_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      shallowDepth: 3
+      branches:
+        include: ^release-1.9.0$
+
+pipelines:
+  - name: pipelines_S_PS_R_GIT_0033
+    steps:
+      - name: S_PS_R_GIT_0033
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+          inputResources:
+            - name: S_PS_R_GIT_0033_GitRepo
+        execution:
+          onExecute:
+            - Set-Location $res_S_PS_R_GIT_0033_GitRepo_resourcePath
+            - if ( (git rev-parse HEAD) -ne "4c516c177534168a0c4c33e511c45cc1910cb275" ) { throw "Wrong commit" }
+            - if ( (git rev-list --count --first-parent 4c516c177534168a0c4c33e511c45cc1910cb275) -ne 3 ) { throw "Wrong depth" }
