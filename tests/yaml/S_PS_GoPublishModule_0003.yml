@@ -1,0 +1,48 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoPublishModule_0003_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+  - name: S_PS_GoPublishModule_0003_BuildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: s_artifactory
+
+pipelines:
+  - name: pipeline_S_PS_GoPublishModule_0003
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_GoPublishModule_0003_1
+        type: GoPublishModule
+        configuration:
+          inputResources:
+            - name: S_PS_GoPublishModule_0003_GitRepo
+          outputResources:
+            - name: S_PS_GoPublishModule_0003_BuildInfo
+          version: "v0.3.${run_number}"
+          targetRepository: test-automation-go-local
+          autoPublishBuildInfo: true
+          sourceLocation: "tests/Go"
+      - name: S_PS_GoPublishModule_0003_2
+        type: PowerShell
+        configuration:
+          inputResources:
+            - name: S_PS_GoPublishModule_0003_BuildInfo
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - if ( "$res_S_PS_GoPublishModule_0003_BuildInfo_buildName" -ne "$JFROG_CLI_BUILD_NAME" ) { throw "Wrong build name" }
+            - if ( "$res_S_PS_GoPublishModule_0003_BuildInfo_buildNumber" -ne "$JFROG_CLI_BUILD_NUMBER" ) { throw "Wrong build number" }
+            - |
+              jfrog rt download --fail-no-op --insecure-tls=${no_verify_ssl} --limit=1 "test-automation-go-local/go.service/@v/v0.3.${run_number}.info"
+              if ($LASTEXITCODE -ne 0) { throw }
+            - jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${JFROG_CLI_BUILD_NUMBER}&artifacts=1"

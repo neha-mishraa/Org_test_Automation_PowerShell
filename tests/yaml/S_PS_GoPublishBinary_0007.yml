@@ -1,0 +1,68 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoPublishBinary_0007_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+  - name: S_PS_GoPublishBinary_0007_BuildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: s_artifactory
+
+pipelines:
+  - name: pipeline_S_PS_GoPublishBinary_0007
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_GoPublishBinary_0007_1
+        type: GoBuild
+        configuration:
+          environmentVariables:
+            JFROG_CLI_BUILD_NAME: S_PS_GoPublishBinary_0007_buildName
+            JFROG_CLI_BUILD_NUMBER: ${run_id}
+          inputResources:
+            - name: S_PS_GoPublishBinary_0007_GitRepo
+          integrations:
+            - name: s_artifactory
+          sourceLocation: "tests/Go"
+          resolverRepo: test-automation-go-virtual
+        execution:
+          onStart:
+            - Push-Location (find_resource_variable ${inputGitRepoResourceName} resourcePath)
+            - Push-Location (find_step_configuration_value sourceLocation)
+            - go get
+            - Pop-Location
+      - name: S_PS_GoPublishBinary_0007_2
+        type: GoPublishBinary
+        configuration:
+          inputSteps:
+            - name: S_PS_GoPublishBinary_0007_1
+          outputResources:
+            - name: S_PS_GoPublishBinary_0007_BuildInfo
+          targetRepository: test-automation-go-local
+          autoPublishBuildInfo: true
+      - name: S_PS_GoPublishBinary_0007_3
+        type: PowerShell
+        configuration:
+          inputResources:
+            - name: S_PS_GoPublishBinary_0007_BuildInfo
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - if ( "$res_S_PS_GoPublishBinary_0007_BuildInfo_buildName" -ne "S_PS_GoPublishBinary_0007_buildName" ) { throw "Wrong build name" }
+            - if ( "$res_S_PS_GoPublishBinary_0007_BuildInfo_buildNumber" -ne "${run_id}" ) { throw "Wrong build number" }
+            - |
+              jfrog rt download --fail-no-op --insecure-tls=${no_verify_ssl} --limit=1 "test-automation-go-local/S_PS_GoPublishBinary_0007_1"
+              if ($LASTEXITCODE -ne 0) { throw }
+            - jfrog rt curl -XGET /api/build/${res_S_PS_GoPublishBinary_0007_BuildInfo_buildName}/${run_id} -o ${step_tmp_dir}/response
+            - |
+              $buildInfoName = (Get-Content "${step_tmp_dir}\response" | ConvertFrom-JSON).buildInfo.name
+              if ( "$buildInfoName" -ne "S_PS_GoPublishBinary_0007_buildName" ) { throw "Wrong build name" }
+            - jfrog rt curl -XDELETE "/api/build/${res_S_PS_GoPublishBinary_0007_BuildInfo_buildName}?buildNumbers=${run_id}&artifacts=1"

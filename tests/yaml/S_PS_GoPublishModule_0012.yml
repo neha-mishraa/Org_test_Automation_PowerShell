@@ -1,0 +1,53 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoPublishModule_0012_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+  - name: S_PS_GoPublishModule_0012_BuildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: s_artifactory
+
+pipelines:
+  - name: pipeline_S_PS_GoPublishModule_0012
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_GoPublishModule_0012_1
+        type: GoPublishModule
+        configuration:
+          environmentVariables:
+            auto_publish: "true"
+          inputResources:
+            - name: S_PS_GoPublishModule_0012_GitRepo
+          outputResources:
+            - name: S_PS_GoPublishModule_0012_BuildInfo
+          integrations:
+            - name: s_artifactory
+          version: "v0.12.${run_number}"
+          targetRepository: test-automation-go-local
+          autoPublishBuildInfo: ${auto_publish}
+          sourceLocation: "tests/Go"
+      - name: S_PS_GoPublishModule_0012_2
+        type: PowerShell
+        configuration:
+          inputResources:
+            - name: S_PS_GoPublishModule_0012_BuildInfo
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - if ( "$res_S_PS_GoPublishModule_0012_BuildInfo_buildName" -ne "$JFROG_CLI_BUILD_NAME" ) { throw "Wrong build name" }
+            - if ( "$res_S_PS_GoPublishModule_0012_BuildInfo_buildNumber" -ne "$JFROG_CLI_BUILD_NUMBER" ) { throw "Wrong build number" }
+            - jfrog rt curl -XGET /api/build/${JFROG_CLI_BUILD_NAME}/${JFROG_CLI_BUILD_NUMBER} -o ${step_tmp_dir}/response
+            - |
+              $buildInfoName = (Get-Content "${step_tmp_dir}\response" | ConvertFrom-JSON).buildInfo.name
+              if ( "$buildInfoName" -ne "${res_S_PS_GoPublishModule_0012_BuildInfo_buildName}" ) { throw "Wrong build name" }
+            - jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${JFROG_CLI_BUILD_NUMBER}&artifacts=1"

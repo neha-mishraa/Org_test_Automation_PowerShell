@@ -1,0 +1,29 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoPublishModule_0006_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+pipelines:
+  - name: pipeline_S_PS_GoPublishModule_0006
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_GoPublishModule_0006
+        type: GoPublishModule
+        configuration:
+          environmentVariables:
+            source_location: "tests/Go"
+          inputResources:
+            - name: S_PS_GoPublishModule_0006_GitRepo
+          integrations:
+            - name: s_artifactory
+          version: "v0.6.${run_number}"
+          targetRepository: test-automation-go-local
+          sourceLocation: "${source_location}"
