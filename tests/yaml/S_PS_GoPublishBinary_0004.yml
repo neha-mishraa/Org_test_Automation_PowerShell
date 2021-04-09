@@ -1,0 +1,37 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_GoPublishBinary_0004_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation.PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+pipelines:
+  - name: pipeline_S_GoPublishBinary_0004
+    steps:
+      - name: S_GoPublishBinary_0004_1
+        type: Bash
+        configuration:
+          onExecute:
+            - echo "testing"
+      - name: S_GoPublishBinary_0004_2
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+        execution:
+          onExecute:
+            - Write-Output "testing"
+      - name: S_GoPublishBinary_0004_3
+        type: GoPublishBinary
+        configuration:
+          nodePool: win_2019
+          inputSteps:
+            - name: S_GoPublishBinary_0004_1
+            - name: S_GoPublishBinary_0004_2
+          integrations:
+            - name: s_artifactory
+          targetRepository: test-automation-go-local
