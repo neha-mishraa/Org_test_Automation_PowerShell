@@ -1,0 +1,87 @@
+resources:
+  - name: PowerShellLinuxVMDeploy_buildInfo
+    type: BuildInfo
+    configuration:
+      # TODO: replace with s_artifactory
+      sourceArtifactory: s_artifactory
+      buildName: PowerShellLinuxVMDeploy_buildInfo
+      buildNumber: 42
+
+  - name: PowershellLinuxVMDeploy_releaseBundle
+    type: ReleaseBundle
+    configuration:
+      # TODO: replace s_distribution -> s_distribution
+      sourceDistribution: s_distribution
+      name: S_PS_LinuxVMDeploy_0006
+      version: ${run_id}
+
+  - name: PowershellVM
+    type: VmCluster
+    configuration:
+      sshKey: s_PS_VM_DEPLOY_SSHKEY
+      targets:
+        - ${int_s_VM_DEPLOY_VM_ADDRESS_0}
+        - ${int_s_VM_DEPLOY_VM_ADDRESS_1}
+
+pipelines:
+  - name: S_PS_LinuxVMDeploy_0006
+    steps:
+      - name: S_PS_LinuxVMDeploy_0006_1
+        type: Bash
+        configuration:
+          integrations:
+            # TODO: change this to s_artifactory
+            - name: s_artifactory
+          outputResources:
+            - name: PowerShellLinuxVMDeploy_buildInfo
+        execution:
+          onExecute:
+            - echo "Build info ${run_id}" > LinuxVMDeploy_buildInfo.txt
+            - jfrog rt upload LinuxVMDeploy_buildInfo.txt test-automation-generic-local --build-name=PowerShellLinuxVMDeploy_buildInfo --build-number=42
+            - jfrog rt build-publish PowerShellLinuxVMDeploy_buildInfo 42
+      - name: S_PS_LinuxVMDeploy_0006_2
+        type: CreateReleaseBundle
+        configuration:
+          releaseBundleName: ${pipeline_name}
+          releaseBundleVersion: ${run_id}
+          dryRun: false
+          sign: true
+          inputSteps:
+            - name: S_PS_LinuxVMDeploy_0006_1
+          inputResources:
+            - name: PowerShellLinuxVMDeploy_buildInfo
+          outputResources:
+            - name: PowershellLinuxVMDeploy_releaseBundle
+
+      - name: S_PS_LinuxVMDeploy_0006_3
+        type: jfrog_dev/LinuxVMDeploy
+        configuration:
+          nodePool: win_2019
+          integrations:
+            # TODO: change this to s_artifactory
+            - name: s_artifactory
+            - name: s_VM_DEPLOY
+          vmEnvironmentVariables:
+            - "step_name=${step_name}"
+            - "run_id=${run_id}"
+            - "pipeline_name=${pipeline_name}"
+          inputSteps:
+            - name: S_PS_LinuxVMDeploy_0006_2
+          inputResources:
+            - name: PowershellVM
+            - name: PowershellLinuxVMDeploy_releaseBundle
+          deployCommand: "ls ~/${step_name}/${run_id}/${pipeline_name}/${run_id}/test-automation-generic-local/LinuxVMDeploy_buildInfo.txt || exit 1"
+          postDeployCommand: "ls ~/${step_name}/${run_id}/${pipeline_name}/${run_id}/test-automation-generic-local/LinuxVMDeploy_buildInfo.txt || exit 1"
+          sshUser: ubuntu
+
+      # Clean up releaseBundle
+      - name: S_PS_LinuxVMDeploy_0006_4
+        type: Bash
+        configuration:
+          integrations:
+            - name: s_distribution
+          inputSteps:
+            - name: S_PS_LinuxVMDeploy_0006_3
+        execution:
+          onExecute:
+            - "$jfrog_cli_path rt release-bundle-delete --quiet --dist-url=$int_s_distribution_url --user=$int_s_distribution_user --password=$int_s_distribution_apikey --delete-from-dist=true S_PS_LinuxVMDeploy_0006 \"\" "
