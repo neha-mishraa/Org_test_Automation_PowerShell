@@ -1,0 +1,18 @@
+pipelines:
+  - name: pipeline_S_PS_GoPublishBinary_0001
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_GoPublishBinary_0001_1
+        type: PowerShell
+        execution:
+          onExecute:
+            - Write-Output "testing"
+      - name: S_PS_GoPublishBinary_0001_2
+        type: GoPublishBinary
+        configuration:
+          inputSteps:
+            - name: S_PS_GoPublishBinary_0001_1
+          integrations:
+            - name: s_artifactory
+          targetRepository: test-automation-go-local
