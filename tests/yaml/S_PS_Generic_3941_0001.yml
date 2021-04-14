@@ -12,6 +12,6 @@ pipelines:
             # Testing stdout
             - echo "Stdout content"
             # Testing stderr
-            - Write-Error "Stderr content"
+            - Write-Error "Stderr content" -ErrorAction Continue
           onComplete:
             - echo "Done"
