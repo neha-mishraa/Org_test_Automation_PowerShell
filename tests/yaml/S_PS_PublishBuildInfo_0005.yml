@@ -1,0 +1,44 @@
+resources:
+  - name: S_PS_PublishBuildInfo_0005_output
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: s_artifactory
+
+pipelines:
+  - name: pipeline_S_PS_PublishBuildInfo_0005
+    steps:
+      - name: S_PS_PublishBuildInfo_0005_1
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - Set-Content -Path S_PS_PublishBuildInfo_0005.txt -Value ${run_id}
+            - Invoke-Expression "$jfrog_cli_path rt upload S_PS_PublishBuildInfo_0005.txt test-automation-generic-local --build-name=${JFROG_CLI_BUILD_NAME} --build-number=${run_id}"
+            - add_run_files (Join-Path ([System.IO.Path]::GetTempPath()) jfrog) jfrog
+            - add_run_variables buildStepName=S_PS_PublishBuildInfo_0005_1 S_PS_PublishBuildInfo_0005_1_buildName=${JFROG_CLI_BUILD_NAME} S_PS_PublishBuildInfo_0005_1_buildNumber=${JFROG_CLI_BUILD_NUMBER}
+            - add_run_variables buildName=${JFROG_CLI_BUILD_NAME} buildNumber=${run_id}
+      - name: S_PS_PublishBuildInfo_0005_2
+        type: PublishBuildInfo
+        configuration:
+          nodePool: win_2019
+          outputResources:
+            - name: S_PS_PublishBuildInfo_0005_output
+          inputSteps:
+            - name: S_PS_PublishBuildInfo_0005_1
+      - name: S_PS_PublishBuildInfo_0005_3
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+          integrations:
+            - name: s_artifactory
+          inputResources:
+            - name: S_PS_PublishBuildInfo_0005_output
+        execution:
+          onExecute:
+            - if ("$res_S_PS_PublishBuildInfo_0005_output_buildName" -ne "${JFROG_CLI_BUILD_NAME}"){ throw("failed") }
+            - if ("$res_S_PS_PublishBuildInfo_0005_output_buildNumber" -ne "${run_id}") { throw("failed") }
+            - jfrog rt curl -XGET "/api/build/${JFROG_CLI_BUILD_NAME}/${run_id}"
+            - jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${run_id}&artifacts=1"
