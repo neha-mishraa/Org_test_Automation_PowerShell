@@ -1,0 +1,46 @@
+resources:
+  - name: S_PS_PublishBuildInfo_0008_output
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: s_artifactory
+
+pipelines:
+  - name: pipeline_S_PS_PublishBuildInfo_0008
+    steps:
+      - name: S_PS_PublishBuildInfo_0008_1
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - Set-Content -Path S_PS_PublishBuildInfo_0008.txt -Value ${run_id}
+            - Invoke-Expression "$jfrog_cli_path rt upload S_PS_PublishBuildInfo_0008.txt test-automation-generic-local"
+            - add_run_variables buildName=${JFROG_CLI_BUILD_NAME} buildNumber=${JFROG_CLI_BUILD_NUMBER}
+            - add_run_variables myEnvironmentVariable=${run_id}
+            - Invoke-Expression "$jfrog_cli_path rt build-collect-env"
+            - add_run_files (Join-Path ([System.IO.Path]::GetTempPath()) jfrog) jfrog
+      - name: S_PS_PublishBuildInfo_0008_2
+        type: PublishBuildInfo
+        configuration:
+          nodePool: win_2019
+          outputResources:
+            - name: S_PS_PublishBuildInfo_0008_output
+          inputSteps:
+            - name: S_PS_PublishBuildInfo_0008_1
+      - name: S_PS_PublishBuildInfo_0008_3
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+          integrations:
+            - name: s_artifactory
+          inputResources:
+            - name: S_PS_PublishBuildInfo_0008_output
+        execution:
+          onExecute:
+            - jfrog rt curl -XGET "/api/build/${JFROG_CLI_BUILD_NAME}/${JFROG_CLI_BUILD_NUMBER}" -o ${step_tmp_dir}/response
+            - jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${JFROG_CLI_BUILD_NUMBER}&artifacts=1"
+            - Get-Content ${step_tmp_dir}/response
+            - $myVar = $(Get-Content ${step_tmp_dir}\response | ConvertFrom-Json).buildInfo.properties.'buildInfo.env.int_s_artifactory_apikey'; add_run_variables excludedVariable=$myVar
+            - if ("" -ne "$excludedVariable") { throw("failed") }
