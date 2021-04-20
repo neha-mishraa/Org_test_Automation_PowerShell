@@ -32,7 +32,7 @@ pipelines:
             -  name: S_PS_GoPublishModule_0010_FileSpec
         execution:
           onExecute:
-            - echo "${run_id}" > S_PS_GoPublishModule_0010
+            - echo "test" > S_PS_GoPublishModule_0010
             - jfrog rt upload S_PS_GoPublishModule_0010 test-automation-generic-local/S_PS_GoPublishModule_0010
       - name: S_PS_GoPublishModule_0010_2
         type: GoPublishModule

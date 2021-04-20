@@ -27,7 +27,7 @@ pipelines:
             - name: s_artifactory
         execution:
           onExecute:
-            - Set-Content -Path S_PS_GoBuild_0003.txt -Value "${run_id}"
+            - Set-Content -Path S_PS_GoBuild_0003.txt -Value "test"
             - jfrog rt upload S_PS_GoBuild_0003.txt test-automation-generic-local
 
       - name: S_PS_GoBuild_0003_2

@@ -38,6 +38,8 @@ pipelines:
       - name: S_PS_GoBuild_0002_2
         type: GoBuild
         configuration:
+          integrations:
+            - name: s_artifactory
           inputResources:
             - name: S_PS_GoBuild_0002_GitRepo
             - name: S_PS_GoBuild_0002_FileSpec
