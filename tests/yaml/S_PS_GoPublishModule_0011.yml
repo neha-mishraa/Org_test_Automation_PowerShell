@@ -1,0 +1,44 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoPublishModule_0011_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+pipelines:
+  - name: pipeline_S_PS_GoPublishModule_0011
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_GoPublishModule_0011_1
+        type: GoPublishModule
+        configuration:
+          inputResources:
+            - name: S_PS_GoPublishModule_0011_GitRepo
+          integrations:
+            - name: s_artifactory
+          version: "v0.11.${run_number}"
+          targetRepository: test-automation-go-local
+          sourceLocation: "tests/Go"
+      - name: S_PS_GoPublishModule_0011_2
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_PS_GoPublishModule_0011_1
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - if ( "${buildStepName}" -ne "S_PS_GoPublishModule_0011_1" ) { throw "Wrong step name" }
+            - if ( "${S_PS_GoPublishModule_0011_1_payloadType}" -ne "go" ) { throw "Wrong type" }
+            - if ( "${S_PS_GoPublishModule_0011_1_version}" -ne "v0.11.${run_number}" ) { throw "Wrong version" }
+            - if ( "${S_PS_GoPublishModule_0011_1_buildNumber}" -ne "${JFROG_CLI_BUILD_NUMBER}" ) { throw "Wrong build number" }
+            - if ( "${S_PS_GoPublishModule_0011_1_buildName}" -ne "${JFROG_CLI_BUILD_NAME}" ) { throw "Wrong build name" }
+            - if ( "${S_PS_GoPublishModule_0011_1_isPromoted}" -ne "false" ) { throw "Wrong isPromoted" }
+            - restore_run_files jfrog jfrog
+            - if ( ! (Test-Path "jfrog\builds" ) ) { throw "Build info not found" }

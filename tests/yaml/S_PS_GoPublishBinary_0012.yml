@@ -1,0 +1,66 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoPublishBinary_0012_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+pipelines:
+  - name: pipeline_S_PS_GoPublishBinary_0012
+    configuration:
+      nodePool: win_2019
+      environmentVariables:
+        readOnly:
+          JFROG_CLI_BUILD_NAME: S_PS_GoPublishBinary_0012_buildName
+    steps:
+      - name: S_PS_GoPublishBinary_0012_1
+        type: GoBuild
+        configuration:
+          inputResources:
+            - name: S_PS_GoPublishBinary_0012_GitRepo
+          integrations:
+            - name: s_artifactory
+          sourceLocation: "tests/Go"
+          resolverRepo: test-automation-go-virtual
+        execution:
+          onStart:
+            - Push-Location (find_resource_variable ${inputGitRepoResourceName} resourcePath)
+            - Push-Location (find_step_configuration_value sourceLocation)
+            - go get
+            - Pop-Location
+      - name: S_PS_GoPublishBinary_0012_2
+        type: GoPublishBinary
+        configuration:
+          inputSteps:
+            - name: S_PS_GoPublishBinary_0012_1
+          integrations:
+            - name: s_artifactory
+          targetRepository: test-automation-go-local
+          autoPublishBuildInfo: false
+      - name: S_PS_GoPublishBinary_0012_3
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_PS_GoPublishBinary_0012_2
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - jfrog rt curl -XGET /api/build/${JFROG_CLI_BUILD_NAME}/${JFROG_CLI_BUILD_NUMBER} -o ${step_tmp_dir}/response
+            - |
+              $buildInfo = (Get-Content "${step_tmp_dir}\response" | ConvertFrom-JSON).buildInfo
+              if ( $buildInfo ) { throw "Build info found" }
+            - |
+              $jfrogPath = Join-Path ([System.IO.Path]::GetTempPath()) "jfrog"
+              restore_run_files jfrog $jfrogPath
+            - Invoke-Expression "$jfrog_cli_path rt build-publish $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER --insecure-tls=${no_verify_ssl}"
+            - jfrog rt curl -XGET /api/build/${JFROG_CLI_BUILD_NAME}/${JFROG_CLI_BUILD_NUMBER} -o ${step_tmp_dir}/response
+            - |
+              $artifactName = (Get-Content "${step_tmp_dir}\response" | ConvertFrom-JSON).buildInfo.modules[0].artifacts[0].name
+              if ( $artifactName -ne "S_PS_GoPublishBinary_0012_1" ) { throw "Artifact not found" }
+            - jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${JFROG_CLI_BUILD_NUMBER}&artifacts=1"

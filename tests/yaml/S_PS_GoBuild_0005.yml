@@ -1,0 +1,35 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoBuild_0005_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+pipelines:
+  - name: pipeline_S_PS_GoBuild_0005
+    configuration:
+      nodePool: win_2019
+      environmentVariables:
+        readOnly:
+          source_location: "tests/Go"
+    steps:
+      - name: S_PS_GoBuild_0005
+        type: GoBuild
+        configuration:
+          integrations:
+            - name: s_artifactory
+          inputResources:
+            - name: S_PS_GoBuild_0005_GitRepo
+          sourceLocation: "${source_location}"
+          resolverRepo: test-automation-go-virtual
+        execution:
+          onStart:
+            - Push-Location (find_resource_variable ${inputGitRepoResourceName} resourcePath)
+            - Push-Location (find_step_configuration_value sourceLocation)
+            - go get
+            - Pop-Location

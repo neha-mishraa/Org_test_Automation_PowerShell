@@ -1,0 +1,40 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoPublishBinary_0005_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+pipelines:
+  - name: pipeline_S_PS_GoPublishBinary_0005
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_GoPublishBinary_0005_1
+        type: GoBuild
+        configuration:
+          inputResources:
+            - name: S_PS_GoPublishBinary_0005_GitRepo
+          integrations:
+            - name: s_artifactory
+          sourceLocation: "tests/Go"
+          resolverRepo: test-automation-go-virtual
+        execution:
+          onStart:
+            - Push-Location (find_resource_variable ${inputGitRepoResourceName} resourcePath)
+            - Push-Location (find_step_configuration_value sourceLocation)
+            - go get
+            - Pop-Location
+      - name: S_PS_GoPublishBinary_0005_2
+        type: GoPublishBinary
+        configuration:
+          inputSteps:
+            - name: S_PS_GoPublishBinary_0005_1
+          integrations:
+            - name: s_artifactory
+          targetRepository: test-automation-go-local

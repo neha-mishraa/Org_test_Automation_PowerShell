@@ -1,0 +1,53 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoBuild_0016_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+pipelines:
+  - name: pipeline_S_PS_GoBuild_0016
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_GoBuild_0016_1
+        type: GoBuild
+        configuration:
+          inputResources:
+            - name: S_PS_GoBuild_0016_GitRepo
+          integrations:
+            - name: s_artifactory
+          sourceLocation: "tests/Go"
+          resolverRepo: test-automation-go-virtual
+        execution:
+          onStart:
+            - Push-Location (find_resource_variable ${inputGitRepoResourceName} resourcePath)
+            - Push-Location (find_step_configuration_value sourceLocation)
+            - go get
+            - Pop-Location
+      - name: S_PS_GoBuild_0016_2
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_PS_GoBuild_0016_1
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - if ( "${buildStepName}" -ne "S_PS_GoBuild_0016_1" ) { throw "Wrong step name" }
+            - if ( "${S_PS_GoBuild_0016_1_payloadType}" -ne "go" ) { throw "Wrong type" }
+            - if ( "${S_PS_GoBuild_0016_1_version}" -ne "" ) { throw "Wrong version" }
+            - if ( "${S_PS_GoBuild_0016_1_buildNumber}" -ne "${JFROG_CLI_BUILD_NUMBER}" ) { throw "Wrong build number" }
+            - if ( "${S_PS_GoBuild_0016_1_buildName}" -ne "${JFROG_CLI_BUILD_NAME}" ) { throw "Wrong build name" }
+            - if ( "${S_PS_GoBuild_0016_1_isPromoted}" -ne "false" ) { throw "Wrong isPromoted" }
+            - if ( "${S_PS_GoBuild_0016_1_outputStateName}" -ne "output" ) { throw "Wrong output name" }
+            - if ( "${S_PS_GoBuild_0016_1_sourceLocation}" -ne "tests/Go" ) { throw "Wrong location" }
+            - restore_run_files output output
+            - if ( -not (Test-Path "output\S_PS_GoBuild_0016_1") ) { throw "TEST FAILED" }
+            - restore_run_files jfrog jfrog
+            - if ( -not (Test-Path "jfrog\builds") ) { throw "TEST FAILED" }

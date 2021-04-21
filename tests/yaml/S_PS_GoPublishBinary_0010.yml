@@ -1,0 +1,55 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoPublishBinary_0010_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+pipelines:
+  - name: pipeline_S_PS_GoPublishBinary_0010
+    configuration:
+      nodePool: win_2019
+      environmentVariables:
+        readOnly:
+          target: test-automation-go-local
+    steps:
+      - name: S_PS_GoPublishBinary_0010_1
+        type: GoBuild
+        configuration:
+          inputResources:
+            - name: S_PS_GoPublishBinary_0010_GitRepo
+          integrations:
+            - name: s_artifactory
+          sourceLocation: "tests/Go"
+          resolverRepo: test-automation-go-virtual
+        execution:
+          onStart:
+            - Push-Location (find_resource_variable ${inputGitRepoResourceName} resourcePath)
+            - Push-Location (find_step_configuration_value sourceLocation)
+            - go get
+            - Pop-Location
+      - name: S_PS_GoPublishBinary_0010_2
+        type: GoPublishBinary
+        configuration:
+          inputSteps:
+            - name: S_PS_GoPublishBinary_0010_1
+          integrations:
+            - name: s_artifactory
+          targetRepository: "${target}"
+      - name: S_PS_GoPublishBinary_0010_3
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_PS_GoPublishBinary_0010_2
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - |
+              jfrog rt download --fail-no-op --insecure-tls=${no_verify_ssl} --limit=1 "test-automation-go-local/S_PS_GoPublishBinary_0010_1"
+              if ($LASTEXITCODE -ne 0) { throw }

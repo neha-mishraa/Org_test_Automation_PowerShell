@@ -1,0 +1,60 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoPublishModule_0010_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+  - name: S_PS_GoPublishModule_0010_FileSpec
+    type: FileSpec
+    configuration:
+      sourceArtifactory: s_artifactory
+      pattern: test-automation-generic-local/S_PS_GoPublishModule_0010
+
+pipelines:
+  - name: pipeline_S_PS_GoPublishModule_0010
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_GoPublishModule_0010_1
+        type: PowerShell
+        configuration:
+          integrations:
+            - name: s_artifactory
+          inputResources:
+            - name: S_PS_GoPublishModule_0010_GitRepo
+          outputResources:
+            -  name: S_PS_GoPublishModule_0010_FileSpec
+        execution:
+          onExecute:
+            - echo "test" > S_PS_GoPublishModule_0010
+            - jfrog rt upload S_PS_GoPublishModule_0010 test-automation-generic-local/S_PS_GoPublishModule_0010
+      - name: S_PS_GoPublishModule_0010_2
+        type: GoPublishModule
+        configuration:
+          inputResources:
+            - name: S_PS_GoPublishModule_0010_GitRepo
+            - name: S_PS_GoPublishModule_0010_FileSpec
+          integrations:
+            - name: s_artifactory
+          version: "v0.10.${run_number}"
+          targetRepository: test-automation-go-local
+          sourceLocation: "tests/Go"
+          deps: ALL
+      - name: S_PS_GoPublishModule_0010_3
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_PS_GoPublishModule_0010_2
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - jfrog rt download --flat --explode --insecure-tls=${no_verify_ssl} --limit=1 "test-automation-go-local/go.service/@v/v0.10.${run_number}.zip"
+            - ls "go.service@v0.10.${run_number}"
+            - if ( -not (Test-Path "go.service@v0.10.${run_number}/S_PS_GoPublishModule_0010") ) { throw "Artifact not found" }
