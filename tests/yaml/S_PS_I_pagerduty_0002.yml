@@ -16,9 +16,6 @@ pipelines:
             - if($int_i_pagerduty_id -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
-            - if($int_i_pagerduty_url -eq $null){
-              Write-Error "Stop" -ErrorAction Stop
-              }
             - if($int_i_pagerduty_token -eq $null){
               Write-Error "Stop" -ErrorAction Stop
               }
