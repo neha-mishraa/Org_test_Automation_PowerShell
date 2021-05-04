@@ -1,0 +1,12 @@
+ pipelines:
+  - name: pipelines_S_PS_I_pagerduty_0007
+    steps:
+      - name: S_PS_I_pagerduty_0007
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+          integrations:
+            - name: PSSI_pagerduty
+        execution:
+          onExecute:
+            - send_notification PSSI_pagerduty

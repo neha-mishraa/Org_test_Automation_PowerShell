@@ -1,0 +1,12 @@
+ pipelines:
+  - name: pipelines_S_PS_I_pagerduty_0009
+    steps:
+      - name: S_PS_I_pagerduty_0009
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+          integrations:
+            - name: i_pagerduty
+        execution:
+          onExecute:
+            - send_notification i_pagerduty --text "hello world from ps run number $run_number"
