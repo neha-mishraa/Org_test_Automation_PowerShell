@@ -1,6 +1,6 @@
 
 resources:
-  - name: ps_propertyBag
+  - name: S_PS_0003_propertyBag
     type: PropertyBag
     configuration:
       property1: "jfrog"
@@ -14,7 +14,7 @@ pipelines:
         configuration:
           nodePool: win_2019
           inputResources:
-            - name: ps_propertyBag
+            - name: S_PS_0003_propertyBag
         execution:
           onExecute:
             - write-output "onExecute"
