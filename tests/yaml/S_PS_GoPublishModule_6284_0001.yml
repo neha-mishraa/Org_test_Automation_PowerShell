@@ -51,16 +51,16 @@ pipelines:
             - $script:artifactSha = $script:buildInfoFileData.checksums.sha256
             - Write-Output $script:artifactSha
             - |
-            if ( "${project_key}" -eq "") {
-            $script:project = "default"
-            } else {
-            $script:project = "${project_key}"
-            }
+              if ( "${project_key}" -eq "") {
+                $script:project = "default"
+              } else {
+                $script:project = "${project_key}"
+              }
             - $script:artifactPath = "$script:project/${JFROG_CLI_BUILD_NAME}/${run_id}"
             - Write-Output $script:artifactPath
             - |
-            $script:headers = @{}
-            $script:headers['Authorization'] = "apiToken $builder_api_token"
+              $script:headers = @{}
+              $script:headers['Authorization'] = "apiToken $builder_api_token"
             - Write-Output $script:headers
             - $script:stepArtifactResponsePath = Join-Path "${step_tmp_dir}" "${step_name}_stepArtifact.json"
             - Write-Output $script:stepArtifactResponsePath
@@ -74,6 +74,6 @@ pipelines:
             - $script:stepArtifactSha = $script:stepArtifact.artifactSha
             - Write-Output $script:stepArtifactSha
             - |
-            if ("$script:stepArtifactSha" -ne "$script:artifactSha") {
-            return 1
-            }
+              if ("$script:stepArtifactSha" -ne "$script:artifactSha") {
+                return 1
+              }
