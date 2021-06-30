@@ -26,7 +26,7 @@ pipelines:
         type: DockerBuild
         configuration:
           affinityGroup: S_PS_DockerPush_6190_001
-          dockerImageName: ${artifactory_registry_url}/test-automation-docker-local/s_dockerpush_6190
+          dockerImageName: ${script:artifactory_registry_url}/test-automation-docker-local/s_dockerpush_6190
           dockerImageTag: ${run_id}
           inputResources:
             - name: S_PS_DockerPush_6190_001_GitRepo
@@ -34,7 +34,7 @@ pipelines:
             - name: s_artifactory
         execution:
           onStart:
-            - $artifactory_registry_url = echo "$int_s_artifactory_url" | Select-String '.*://([^/]*)' | Foreach {$_.Matches} | Foreach {$_.Groups[1].Value}
+            - $script:artifactory_registry_url = echo "$int_s_artifactory_url" | Select-String '.*://([^/]*)' | Foreach {$_.Matches} | Foreach {$_.Groups[1].Value}
             - cd $res_S_PS_DockerPush_6190_001_GitRepo_resourcePath
             - Set-Content -Path './Dockerfile' -Value 'FROM mcr.microsoft.com/windows/nanoserver:1809'
       - name: S_PS_DockerPush_6190_001_2
