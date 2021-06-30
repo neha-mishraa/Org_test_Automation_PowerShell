@@ -62,17 +62,18 @@ pipelines:
         execution:
           onExecute:
             - $script:buildInfo = jfrog rt curl -XGET "/api/build/${JFROG_CLI_BUILD_NAME}/${run_id}" | ConvertFrom-Json
+            - $script:buildInfo = $buildInfo.buildInfo
             - $script:buildInfo | ConvertTo-Json -Depth 100
             - |
-              Foreach ($module in $script:buildInfo.buildInfo.modules) {
-                if ($module.id -eq "pipeline_S_PS_DockerPush_6190_002") {
+              Foreach ($module in $buildInfo.modules) {
+                if ($module.id -eq "s_dockerpush_6190_2:${run_id}") {
                   $script:artifact = $module.artifacts[0]
                 }
               }
             - $script:artifact | ConvertTo-Json -Depth 100
-            - $script:artifactPath = $script.artifact.path
+            - $script:artifactPath = $script:artifact.path
             - Write-Output $script:artifactPath
-            - $script:artifactSha = $script.artifact.sha256
+            - $script:artifactSha = $script:artifact.sha256
             - Write-Output $script:artifactSha
 
 #            - "stepArtifact=$(curl -sS -H \"Authorization: apiToken $builder_api_token\" -H 'Content-Type: application/json' \"${pipelines_api_url}/stepArtifacts?artifactPath=${artifactPath}&artifactSha=${artifactSha}&artifactType=artifact\")"
