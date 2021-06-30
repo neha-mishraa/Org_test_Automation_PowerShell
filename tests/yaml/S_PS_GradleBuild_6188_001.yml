@@ -1,0 +1,83 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GradleBuild_6188_001_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_bash.path }}
+      branches:
+        include: {{gitBranch}}
+
+  - name: S_PS_GradleBuild_6188_001_BuildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: s_artifactory
+
+pipelines:
+  - name: pipeline_S_PS_GradleBuild_6188_001
+    configuration:
+      nodePool: win_2019
+      environmentVariables:
+        readOnly:
+          JFROG_CLI_BUILD_NUMBER: ${run_id}
+    steps:
+      - name: S_PS_GradleBuild_6188_001_1
+        type: GradleBuild
+        configuration:
+          inputResources:
+            - name: S_PS_GradleBuild_6188_001_GitRepo
+          outputResources:
+            - name: S_PS_GradleBuild_6188_001_BuildInfo
+          integrations:
+            - name: s_artifactory
+          autoPublishBuildInfo: true
+          resolverRepo: "test-automation-gradle-remote"
+          deployerRepo: "test-automation-gradle-local"
+          sourceLocation: "tests/gradle"
+          gradleCommand: "hello"
+
+      - name: S_PS_GradleBuild_6188_001_2
+        type: PowerShell
+        configuration:
+          inputResources:
+            - name: S_PS_GradleBuild_6188_001_BuildInfo
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - $script:buildInfo = jfrog rt search "*/${JFROG_CLI_BUILD_NAME}/${run_id}*.json" | ConvertFrom-Json
+            - Write-Output $script:buildInfo
+            - $script:buildInfoFilePath = $script:buildInfo[0].path
+            - Write-Output $script:buildInfoFilePath
+            - $script:buildInfoFileData = jfrog rt curl -XGET /api/storage/$script:buildInfoFilePath | ConvertFrom-Json
+            - $script:artifactSha = $script:buildInfoFileData.checksums.sha256
+            - Write-Output $script:artifactSha
+            - |
+              if ( "${project_key}" -eq "") {
+                $script:project = "default"
+              } else {
+                $script:project = "${project_key}"
+              }
+            - $script:artifactPath = "$script:project/${JFROG_CLI_BUILD_NAME}/${run_id}"
+            - Write-Output $script:artifactPath
+            - |
+              $script:headers = @{}
+              $script:headers['Authorization'] = "apiToken $builder_api_token"
+            - Write-Output $script:headers
+            - $script:stepArtifactResponsePath = Join-Path "${step_tmp_dir}" "${step_name}_stepArtifact.json"
+            - Write-Output $script:stepArtifactResponsePath
+            - $script:stepArtifactUrl = "${pipelines_api_url}/stepArtifacts?artifactPath=$script:artifactPath&artifactSha=$script:artifactSha&artifactType=buildInfo"
+            - Write-Output $script:stepArtifactUrl
+            - Invoke-WebRequest "$script:stepArtifactUrl" -Headers $script:headers -TimeoutSec 60 -ContentType "application/json" -UseBasicParsing -OutFile "$script:stepArtifactResponsePath"
+            - type $script:stepArtifactResponsePath
+            - jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${run_id}&artifacts=1"
+            - $script:stepArtifact = type $script:stepArtifactResponsePath | ConvertFrom-Json
+            - Write-Output $script:stepArtifact
+            - $script:stepArtifactSha = $script:stepArtifact.artifactSha
+            - Write-Output $script:stepArtifactSha
+            - |
+              if ("$script:stepArtifactSha" -ne "$script:artifactSha") {
+                return 1
+              }
