@@ -32,6 +32,7 @@ pipelines:
       - name: S_PS_LinuxVMDeploy_0002_2
         type: jfrog_dev/LinuxVMDeploy
         configuration:
+          dry_run: "false"
           nodePool: win_2019
           integrations:
             - name: s_VM_DEPLOY
@@ -44,6 +45,10 @@ pipelines:
             - name: myVM
             - name: LinuxVMDeploy_fileSpec
           # Fail the test if the file does not exist in the right path on the vm.
-          deployCommand: "ls ${target_directory}/LinuxVMDeploy_fileSpec.txt || exit 1"
           sshUser: ubuntu
           rolloutDelaySecs: 3
+          scripts:
+            - name: command1
+              context: "targetCluster"
+              commands:
+                - "ls $target_directory/LinuxVMDeploy_fileSpec.txt || exit 1"
