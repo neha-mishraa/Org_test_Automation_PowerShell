@@ -64,7 +64,7 @@ pipelines:
               $script:headers = @{}
               $script:headers['Authorization'] = "apiToken $builder_api_token"
             - $script:stepArtifactResponsePath = Join-Path "${step_tmp_dir}" "${step_name}_stepArtifact.json"
-            - $script:stepArtifactUrl = "${pipelines_api_url}/stepArtifacts?artifactPath=${artifactPath}&artifactSha=${artifactSha}&artifactType=artifact"
+            - $script:stepArtifactUrl = "${pipelines_api_url}/stepArtifacts?artifactPath=api/go/${artifactPath}&artifactSha=${artifactSha}&artifactType=artifact"
             - Write-Output $script:stepArtifactUrl
             - Invoke-WebRequest "$script:stepArtifactUrl" -Headers $script:headers -TimeoutSec 60 -ContentType "application/json" -UseBasicParsing -OutFile "$script:stepArtifactResponsePath"
             - type $script:stepArtifactResponsePath
