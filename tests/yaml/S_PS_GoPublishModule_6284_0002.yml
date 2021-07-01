@@ -32,7 +32,7 @@ pipelines:
             - name: S_PS_GoPublishModule_6284_0002_GitRepo
           outputResources:
             - name: S_PS_GoPublishModule_6284_0002_BuildInfo
-          version: "v0.0.${run_number}"
+          version: "v0.0.${run_id}"
           targetRepository: test-automation-go-local
           autoPublishBuildInfo: true
           sourceLocation: "tests/Go"
