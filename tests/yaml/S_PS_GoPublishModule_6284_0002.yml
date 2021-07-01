@@ -68,7 +68,7 @@ pipelines:
             - Write-Output $script:stepArtifactUrl
             - Invoke-WebRequest "$script:stepArtifactUrl" -Headers $script:headers -TimeoutSec 60 -ContentType "application/json" -UseBasicParsing -OutFile "$script:stepArtifactResponsePath"
             - type $script:stepArtifactResponsePath
-            - jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${run_id}&artifacts=1"
+#            - jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${run_id}&artifacts=1"
             - $script:stepArtifact = type $script:stepArtifactResponsePath | ConvertFrom-Json
             - Write-Output $script:stepArtifact
             - $script:stepArtifactSha = $script:stepArtifact.artifactSha
