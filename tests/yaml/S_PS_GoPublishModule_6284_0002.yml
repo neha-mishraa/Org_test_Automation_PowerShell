@@ -1,0 +1,79 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_GoPublishModule_6284_0002_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+
+  - name: S_PS_GoPublishModule_6284_0002_BuildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: s_artifactory
+
+pipelines:
+  - name: pipeline_S_PS_GoPublishModule_6284_0002
+    configuration:
+      nodePool: win_2019
+      environmentVariables:
+        readOnly:
+          JFROG_CLI_BUILD_NUMBER: ${run_id}
+    steps:
+      - name: S_PS_GoPublishModule_6284_0002_1
+        type: GoPublishModule
+        configuration:
+          integrations:
+            - name: s_artifactory
+          inputResources:
+            - name: S_PS_GoPublishModule_6284_0002_GitRepo
+          outputResources:
+            - name: S_PS_GoPublishModule_6284_0002_BuildInfo
+          version: "v0.0.${run_number}"
+          targetRepository: test-automation-go-local
+          autoPublishBuildInfo: true
+          sourceLocation: "tests/Go"
+
+      - name: S_PS_GoPublishModule_6284_0002_2
+        type: PowerShell
+        configuration:
+          inputResources:
+            - name: S_PS_GoPublishModule_6284_0002_BuildInfo
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - $script:buildInfo = jfrog rt curl -XGET "/api/build/${JFROG_CLI_BUILD_NAME}/${run_id}" | ConvertFrom-Json
+            - $script:buildInfo = $buildInfo.buildInfo
+            - $script:buildInfo | ConvertTo-Json -Depth 100
+            - |
+              Foreach ($module in $buildInfo.modules) {
+                if ($module.id -eq "go.service") {
+                  $script:artifact = $module.artifacts[0]
+                }
+              }
+            - $script:artifact | ConvertTo-Json -Depth 100
+            - $script:artifactPath = $script:artifact.path
+            - Write-Output $script:artifactPath
+            - $script:artifactSha = $script:artifact.sha256
+            - Write-Output $script:artifactSha
+            - |
+              $script:headers = @{}
+              $script:headers['Authorization'] = "apiToken $builder_api_token"
+            - $script:stepArtifactResponsePath = Join-Path "${step_tmp_dir}" "${step_name}_stepArtifact.json"
+            - $script:stepArtifactUrl = "${pipelines_api_url}/stepArtifacts?artifactPath=${artifactPath}&artifactSha=${artifactSha}&artifactType=artifact"
+            - Write-Output $script:stepArtifactUrl
+            - Invoke-WebRequest "$script:stepArtifactUrl" -Headers $script:headers -TimeoutSec 60 -ContentType "application/json" -UseBasicParsing -OutFile "$script:stepArtifactResponsePath"
+            - type $script:stepArtifactResponsePath
+            - jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${run_id}&artifacts=1"
+            - $script:stepArtifact = type $script:stepArtifactResponsePath | ConvertFrom-Json
+            - Write-Output $script:stepArtifact
+            - $script:stepArtifactSha = $script:stepArtifact.artifactSha
+            - Write-Output $script:stepArtifactSha
+            - |
+              if ("$script:stepArtifactSha" -ne "$script:artifactSha") {
+                return 1
+              }
