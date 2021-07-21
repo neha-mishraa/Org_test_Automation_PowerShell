@@ -52,6 +52,6 @@ pipelines:
             - Invoke-Expression "$jfrog_cli_path rt build-publish $JFROG_CLI_BUILD_NAME $JFROG_CLI_BUILD_NUMBER --insecure-tls=${no_verify_ssl}"
             - jfrog rt curl -XGET /api/build/${JFROG_CLI_BUILD_NAME}/${JFROG_CLI_BUILD_NUMBER} -o ${step_tmp_dir}/response
             - |
-              $moduleId = (Get-Content "${step_tmp_dir}\response" | ConvertFrom-JSON).buildInfo.modules[0].id
+              $moduleId = (Get-Content "${step_tmp_dir}\response" | ConvertFrom-JSON).buildInfo.modules[1].id
               if ( $moduleId -ne "go.service" ) { throw "Module not found" }
             - jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${JFROG_CLI_BUILD_NUMBER}&artifacts=1"
