@@ -1,0 +1,10 @@
+pipelines:
+  - name: pipeline_S_PS_UTIL_6380_013
+    steps:
+      - name: S_PS_UTIL_6380_013_1
+        type: PowerShell
+        configuration:
+          nodePool: win_2019
+        execution:
+          onExecute:
+            - foreach ($i in 0..100) { add_run_variables var${i}="ThisIsLongVariable${i}" }

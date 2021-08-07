@@ -1,0 +1,17 @@
+pipelines:
+  - name: S_PS_UTIL_6380_007
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_UTIL_6380_007_1
+        type: PowerShell
+        configuration:
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - configure_jfrog_cli -artifactory-url $int_s_artifactory_url -user $int_s_artifactory_user -apikey $int_s_artifactory_apikey -server-name test_config
+            - jfrog config show test_config
+            - jfrog rt ping --server-id test_config
+          onComplete:
+            - cleanup_jfrog_cli -server-name test_config

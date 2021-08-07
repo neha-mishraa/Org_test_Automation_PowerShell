@@ -1,0 +1,41 @@
+pipelines:
+  - name: S_PS_UTIL_6380_005
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_UTIL_6380_005_1
+        type: PowerShell
+        execution:
+          onExecute:
+            - Write-Output "Testing..."
+      - name: S_PS_UTIL_6380_005_2
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_PS_UTIL_6380_005_1
+        execution:
+          onExecute:
+            - New-Item -Name "test_directory" -ItemType Directory
+            - Set-Content -Path "test_directory/my_file_1" -Value ${run_id}
+            - add_run_files test_directory test_directory
+      - name: S_PS_UTIL_6380_005_3
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_PS_UTIL_6380_005_1
+        execution:
+          onExecute:
+            - New-Item -Name "test_directory" -ItemType Directory
+            - Set-Content -Path "test_directory/my_file_2" -Value ${run_id}
+            - add_run_files test_directory test_directory
+      - name: S_PS_UTIL_6380_005_4
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_PS_UTIL_6380_005_2
+            - name: S_PS_UTIL_6380_005_3
+        execution:
+          onExecute:
+            - restore_run_files test_directory test_directory
+            - if (-not (Test-Path test_directory/my_file_1)) { throw "File missing" }
+            - if (-not (Test-Path test_directory/my_file_2)) { throw "File missing" }

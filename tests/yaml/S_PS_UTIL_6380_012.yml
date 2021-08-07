@@ -1,0 +1,21 @@
+pipelines:
+  - name: S_PS_UTIL_6380_012
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_UTIL_6380_012_1
+        type: PowerShell
+        configuration:
+          environmentVariables:
+            USE_LOCAL_JFROG_CLI: "true"
+          integrations:
+            - name: s_artifactory
+        execution:
+          onExecute:
+            - configure_jfrog_cli -artifactory-url $int_s_artifactory_url -user $int_s_artifactory_user -apikey $int_s_artifactory_apikey -server-name test_config
+            - jfrog rt config show test_config
+            - cleanup_jfrog_cli -server-name test_config
+            - |
+              jfrog config show test_config
+              if ($LASTEXITCODE -eq 0) { throw "Config found" }
+              $LASTEXITCODE = 0

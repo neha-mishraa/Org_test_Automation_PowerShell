@@ -1,0 +1,22 @@
+pipelines:
+  - name: S_PS_UTIL_6380_003
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_UTIL_6380_003_1
+        type: PowerShell
+        execution:
+          onExecute:
+            - New-Item -Name "test_directory" -ItemType Directory
+            - Set-Content -Path "test_directory/run.env" -Value ${run_id}
+            - add_run_files test_directory test_directory
+      - name: S_PS_UTIL_6380_003_2
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_PS_UTIL_6380_003_1
+        execution:
+          onExecute:
+            - restore_run_files test_directory test_directory
+            - if (-not (Test-Path test_directory/run.env)) { throw "File missing" }
+            - if ( (Get-Content -Path test_directory/run.env) -ne "$run_id" ) { throw "File contents not as expected" }

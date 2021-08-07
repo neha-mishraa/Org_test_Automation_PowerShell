@@ -1,0 +1,20 @@
+pipelines:
+  - name: S_PS_UTIL_6380_006
+    configuration:
+      nodePool: win_2019
+    steps:
+      - name: S_PS_UTIL_6380_006_1
+        type: PowerShell
+        execution:
+          onExecute:
+            - Set-Content -Path "test_file" -Value ${run_id}
+            - add_run_files test_file test_file
+      - name: S_PS_UTIL_6380_006_2
+        type: PowerShell
+        configuration:
+          inputSteps:
+            - name: S_PS_UTIL_6380_006_1
+        execution:
+          onExecute:
+            - restore_run_files test_file test_file
+            - restore_run_files test_file test_file2
