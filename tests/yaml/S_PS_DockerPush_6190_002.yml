@@ -77,7 +77,7 @@ pipelines:
             - Write-Output $script:artifactSha
             - |
               $script:headers = @{}
-              $script:headers['Authorization'] = "apiToken $builder_api_token"
+              $script:headers['Authorization'] = "Bearer $builder_api_token"
             - $script:stepArtifactResponsePath = Join-Path "${step_tmp_dir}" "${step_name}_stepArtifact.json"
             - $script:stepArtifactUrl = "${pipelines_api_url}/stepArtifacts?artifactPath=${artifactPath}&artifactSha=${artifactSha}&artifactType=artifact"
             - Write-Output $script:stepArtifactUrl

@@ -65,7 +65,7 @@ pipelines:
               $response = Invoke-WebRequest "${distributionUrl}/api/v1/release_bundle/${releaseBundleName}/${releaseBundleVersion}" -Method Get -Headers $headers -TimeoutSec 60 -ContentType 'application/json' -UseBasicParsing -OutFile "${step_tmp_dir}\response" -PassThru
               $artifactSha = $response.Headers['X-Checksum-Sha256']
               $artifactPath = "${releaseBundleName}/${releaseBundleVersion}"
-              $headers = @{'Authorization' = "apiToken $builder_api_token"}
+              $headers = @{'Authorization' = "Bearer $builder_api_token"}
               $stepArtifact = Invoke-RestMethod -Method Get -ContentType 'application/json' -Headers $headers -Uri "${pipelines_api_url}/stepArtifacts?artifactPath=${artifactPath}&artifactSha=${artifactSha}&artifactType=releaseBundle" -UseBasicParsing
               Write-Output "Deleting release bundle..."
               jfrog config add distribution --overwrite --insecure-tls=$no_verify_ssl --dist-url $int_s_distribution_url --user $int_s_distribution_user --apikey $int_s_distribution_apikey --interactive=false
