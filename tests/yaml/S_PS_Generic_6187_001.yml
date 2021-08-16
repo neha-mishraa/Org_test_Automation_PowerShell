@@ -27,6 +27,6 @@ pipelines:
         execution:
           onExecute:
             - |
-              $headers = @{ 'Authorization' = "apiToken $builder_api_token" }
+              $headers = @{ 'Authorization' = "Bearer $builder_api_token" }
               $stepArtifact = Invoke-RestMethod -Method Get -ContentType 'application/json' -Headers $headers -Uri "${pipelines_api_url}/stepArtifacts?artifactPath=test-automation-generic-local%2FS_PS_Generic_6187_001.txt&artifactSha=${artifactSha}&artifactType=artifact" -UseBasicParsing
               if ( $stepArtifact.artifactSha -ne $artifactSha ) { throw "SHA doesn't match" }

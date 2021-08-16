@@ -54,7 +54,7 @@ pipelines:
               (jfrog rt curl -XGET "/api/build/${JFROG_CLI_BUILD_NAME}/${run_id}" | ConvertFrom-Json).buildInfo.modules | Where {$_.id -eq "pipeline_S_PS_GoPublishBinary_6187_001"} | ForEach { $artifact = $_.artifacts }
               $artifactPath = $artifact.path
               $artifactSha = $artifact.sha256
-              $headers = @{ 'Authorization' = "apiToken $builder_api_token" }
+              $headers = @{ 'Authorization' = "Bearer $builder_api_token" }
               $stepArtifact = Invoke-RestMethod -Method Get -ContentType 'application/json' -Headers $headers -Uri "${pipelines_api_url}/stepArtifacts?artifactPath=${artifactPath}&artifactSha=${artifactSha}&artifactType=artifact" -UseBasicParsing
               jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${run_id}&artifacts=1"
               if ( $stepArtifact.artifactSha -ne $artifactSha ) { throw "SHA doesn't match" }

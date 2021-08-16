@@ -31,7 +31,7 @@ pipelines:
               if ( "${project_key}" -eq "" ) { $project="default" } else { $project="${project_key}" }
               $artifactPath = "${project}/${JFROG_CLI_BUILD_NAME}/${run_id}"
               $headers = @{}
-              $headers['Authorization'] = "apiToken $builder_api_token"
+              $headers['Authorization'] = "Bearer $builder_api_token"
               $stepArtifact = Invoke-RestMethod -Method Get -ContentType 'application/json' -Headers $headers -Uri "${pipelines_api_url}/stepArtifacts?artifactPath=${artifactPath}&artifactSha=${artifactSha}&artifactType=buildInfo" -UseBasicParsing
               jfrog rt curl -XDELETE "/api/build/${JFROG_CLI_BUILD_NAME}?buildNumbers=${run_id}&artifacts=1"
               if ( $stepArtifact.artifactSha -ne $artifactSha ) { throw "SHA doesn't match" }
