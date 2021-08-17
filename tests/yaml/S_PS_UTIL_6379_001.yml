@@ -20,7 +20,7 @@ pipelines:
           onExecute:
             - |
               $headers = @{}
-              $headers['Authorization'] = "apiToken ${builder_api_token}"
+              $headers['Authorization'] = "Bearer ${builder_api_token}"
               Invoke-WebRequest "${pipelines_api_url}/stepVariables?runIds=${run_id}" -Headers $headers -TimeoutSec 60 -ContentType "application/json" -UseBasicParsing -OutFile "response.json"
               $stepVariables = (type response.json | ConvertFrom-Json)
               Write-Output $stepVariables
@@ -28,4 +28,4 @@ pipelines:
               $runVariables = ${stepVariables}.variables.runVariables
               if ( $runVariables.length -ne 2 ) { throw "More runVariables than expected" }
               if ( $runVariables[0].key -ne "var1" ) { throw "Wrong first variable" }
-              if ( $runVariables[0].key -ne "var2" ) { throw "Wrong second variable" }
+              if ( $runVariables[1].key -ne "var2" ) { throw "Wrong second variable" }
