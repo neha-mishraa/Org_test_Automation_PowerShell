@@ -46,7 +46,7 @@ pipelines:
             - if($res_S_PS_R_GIT_0019_GitRepo_integrationAlias -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0019_GitRepo_branchName -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0019_GitRepo_resourcePath -eq $null){ Write-Error "Stop" -ErrorAction Stop}
-            - if($res_S_PS_R_GIT_0019_GitRepo_compareUrl -eq $null){ Write-Error "Stop" -ErrorAction Stop}
+            # - if($res_S_PS_R_GIT_0019_GitRepo_compareUrl -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0019_GitRepo_repositoryProvider -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0019_GitRepo_sysPrivateDeployKey -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0019_GitRepo_sysPublicDeployKey -eq $null){ Write-Error "Stop" -ErrorAction Stop}
