@@ -26,6 +26,7 @@ pipelines:
               Write-Output $stepVariables
               if ( $stepVariables.length -ne 1 ) { throw "More stepVariables than expected" }
               $runVariables = ${stepVariables}.variables.runVariables
+              Write-Output $runVariables
               if ( $runVariables.length -ne 2 ) { throw "More runVariables than expected" }
               if ( $runVariables[0].key -ne "var1" ) { throw "Wrong first variable" }
               if ( $runVariables[1].key -ne "var2" ) { throw "Wrong second variable" }
