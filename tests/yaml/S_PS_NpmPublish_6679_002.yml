@@ -1,0 +1,46 @@
+template: true
+valuesFilePath: ../values/gitRepoValues.yml
+
+resources:
+  - name: S_PS_NpmPublish_6679_002_GitRepo
+    type: GitRepo
+    configuration:
+      gitProvider: s_gitHub
+      path: {{ .Values.GitHub.Org_test_Automation_PowerShell.path }}
+      branches:
+        include: {{gitBranch}}
+  - name: S_PS_NpmPublish_6679_002_buildInfo
+    type: BuildInfo
+    configuration:
+      sourceArtifactory: s_artifactory
+
+pipelines:
+  - name: S_PS_NpmPublish_6679_002
+    steps:
+      - name: S_PS_NpmPublish_6679_002_1
+        type: NpmBuild
+        execution:
+          onStart:
+            - throw "failing on purpose"
+        configuration:
+          nodePool: win_2019
+          affinityGroup: bldGroup
+          sourceLocation: "tests/npm"
+          resolverRepo: "test-automation-npm-remote"
+          integrations:
+            - name: s_artifactory
+          inputResources:
+            - name: S_PS_NpmPublish_6679_002_GitRepo
+      - name: S_PS_NpmPublish_6679_002_2
+        type: NpmPublish
+        configuration:
+          nodePool: win_2019
+          affinityGroup: bldGroup
+          autoPublishBuildInfo: true
+          deployerRepo: "test-automation-npm-local"
+          integrations:
+            - name: s_artifactory
+          inputSteps:
+            - name: S_PS_NpmPublish_6679_002_1
+          outputResources:
+            - name: S_PS_NpmPublish_6679_002_buildInfo
