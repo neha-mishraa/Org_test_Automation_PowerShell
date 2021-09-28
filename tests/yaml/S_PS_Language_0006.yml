@@ -14,7 +14,7 @@ pipelines:
                   - 16
         execution:
           onExecute:
-            - node -v
-            - if($(node -v) -ne "v16"){
+            - node --version
+            - if($(node -v) -ne "v16.6.2"){
               Write-Error "Stop" -ErrorAction Stop
               }
