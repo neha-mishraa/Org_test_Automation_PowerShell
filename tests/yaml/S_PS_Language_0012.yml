@@ -11,7 +11,7 @@ pipelines:
               auto:
                 language: dotnetcore
                 versions:
-                  - 2.1
+                  - 2
         execution:
           onExecute:
             - dotnet --version
