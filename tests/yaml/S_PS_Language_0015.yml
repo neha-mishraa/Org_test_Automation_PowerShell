@@ -15,6 +15,6 @@ pipelines:
         execution:
           onExecute:
             - go version
-            - if($(go version) -ne "go version go1.15 windows/amd64"){
+            - if($(go version) -ne "go version go1.15.15 windows/amd64"){
               Write-Error "Stop" -ErrorAction Stop
               }
