@@ -11,10 +11,10 @@ pipelines:
               auto:
                 language: dotnetcore
                 versions:
-                  - 2.1
+                  - 2
         execution:
           onExecute:
             - dotnet --version
-            - if($(dotnet --version) -ne "2.1.807"){
+            - if($(dotnet --version) -ne "2"){
               Write-Error "Stop" -ErrorAction Stop
               }
