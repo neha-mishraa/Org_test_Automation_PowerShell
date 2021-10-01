@@ -20,6 +20,7 @@ pipelines:
         execution:
           onExecute:
             - write-output "executing step..."
+            - Get-Variable | format-table
             - if($res_S_PS_R_GIT_0016_GitRepo_lastAuthorEmail -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_gitProvider_token -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_isGitTag -eq $null){ Write-Error "Stop" -ErrorAction Stop}
