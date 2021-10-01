@@ -15,6 +15,6 @@ pipelines:
         execution:
           onExecute:
             - node --version
-            - if($(node -v) -ne "v14.17.5"){
+            - if($(node -v) -ne "v14.18.0"){
               Write-Error "Stop" -ErrorAction Stop
               }
