@@ -51,7 +51,7 @@ pipelines:
             - if($res_S_PS_R_GIT_0016_GitRepo_repositoryProvider -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_sysPrivateDeployKey -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_sysPublicDeployKey -eq $null){ Write-Error "Stop" -ErrorAction Stop}
-            - if($res_S_PS_R_GIT_0016_GitRepo_lastAuthorLogin -eq $null){ Write-Error "Stop" -ErrorAction Stop}
+            # - if($res_S_PS_R_GIT_0016_GitRepo_lastAuthorLogin -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_beforeCommitSha -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_gitRepoRepositoryHttpsUrl -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_isPullRequestClose -eq $null){ Write-Error "Stop" -ErrorAction Stop}
