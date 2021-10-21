@@ -29,6 +29,17 @@ pipelines:
             - name: S_PS_DockerPush_6679_001_GitRepo
           integrations:
             - name: s_artifactory
+          execution:
+            onStart:
+              - |
+                $artifactory_url = [System.Uri]$int_s_artifactory_url
+                $artifactory_registry_host = $artifactory_url.Host
+                $artifactory_registry_port = $artifactory_url.Port
+                if ($artifactory_registry_port -eq 80) {
+                add_run_variables artifactory_registry_url="${artifactory_registry_host}"
+                } else {
+                  add_run_variables artifactory_registry_url="${artifactory_registry_host}:${artifactory_registry_port}"
+                }
       - name: S_PS_DockerPush_6679_001_2
         type: DockerPush
         configuration:
