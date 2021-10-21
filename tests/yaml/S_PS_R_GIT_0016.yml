@@ -43,7 +43,7 @@ pipelines:
             - if($res_S_PS_R_GIT_0016_GitRepo_isPrerelease -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_gitRepoRepositorySshUrl -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_isRelease -eq $null){ Write-Error "Stop" -ErrorAction Stop}
-            - if($res_S_PS_R_GIT_0016_GitRepo_committerLogin -eq $null){ Write-Error "Stop" -ErrorAction Stop}
+            # - if($res_S_PS_R_GIT_0016_GitRepo_committerLogin -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_integrationAlias -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_branchName -eq $null){ Write-Error "Stop" -ErrorAction Stop}
             - if($res_S_PS_R_GIT_0016_GitRepo_resourcePath -eq $null){ Write-Error "Stop" -ErrorAction Stop}
